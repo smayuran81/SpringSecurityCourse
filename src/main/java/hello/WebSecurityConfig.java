@@ -22,37 +22,34 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		auth.
 		inMemoryAuthentication()
 		.withUser("user").password("{noop}pass1").
-		roles("USER");
+		roles("USER")
+		.authorities("ADMIN");
 
 		
 	}	// @formatter:on
 	
 	
-    /*@Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http
-            .authorizeRequests()
-                .antMatchers("/", "/home").permitAll()
-                .anyRequest().authenticated()
-                .and()
-            .formLogin()
-                .loginPage("/login")
-                .permitAll()
-                .and()
-            .logout()
-                .permitAll();
-    }
-
-    @Bean
-    @Override
-    public UserDetailsService userDetailsService() {
-        UserDetails user =
-             User.withDefaultPasswordEncoder()
-                .username("user")
-                .password("password")
-                .roles("USER")
-                .build();
-
-        return new InMemoryUserDetailsManager(user);
-    }*/
+	/**
+	 * Lesson 3, URL Authorization: We set up Authorization by using an extension point in the configuration
+	 * All the possible options available for URL authorization
+	 */
+	@Override
+	protected void configure(HttpSecurity http) throws Exception { //@formatter:off
+		
+		// This order is important, this says that anything with /greeting should have the authority of ADMIN
+		http
+		.authorizeRequests()
+		.antMatchers("/greeting").hasAnyAuthority("ADMIN","ADMIN2")
+			.anyRequest().authenticated()			
+			.and()
+			/**
+			 * loginpage("/login") specifies which page is our login, and the assosciated controller will redirect it to the page
+			 * loginProcessingUrl - this says where the login processing happens, in the post method we call it using @{/doLogin}
+			 * 
+			 */
+		.formLogin().loginPage("/login").permitAll()
+		.loginProcessingUrl("/doLogin");
+	} //@formatter:on
+	
+	
 }
