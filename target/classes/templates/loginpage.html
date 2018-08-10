@@ -10,6 +10,8 @@
 <body>
 
 	<h1>Login Page</h1>
+	
+	
 	<p th:if="${param.error}" class="error">Wrong user or password</p>
 	<form th:action="@{/doLogin}" method="post" class="form-horizontal">
 		<div>
